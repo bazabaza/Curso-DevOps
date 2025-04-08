@@ -1,0 +1,26 @@
+# manager
+docker swarm init --advertise-addr 192.168.33.10
+
+# worker
+docker swarm join --token SWMTKN-... 192.168.33.10:2377
+
+# check it
+docker node ls
+
+# manager
+docker build -t proxy-image -f proxy/Dockerfile .
+docker build -t user-auth ./microservices/user-auth
+docker build -t bus-reservation ./microservices/bus-reservation
+docker build -t payment-gateway ./microservices/payment-gateway
+docker build -t route-scheduler ./microservices/route-scheduler
+
+# worker
+docker build -t proxy-image -f proxy/Dockerfile .
+
+# manager
+docker stack deploy -c docker-stack.yml app
+
+# browser local
+http://localhost:8081 - proxy inverso on manager
+http://localhost:8082 - proxy inverso on worker
+
