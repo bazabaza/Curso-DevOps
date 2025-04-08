@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  proxy:
+    image: proxy-image:latest
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 2
+    depends_on:
+      - user-auth
+      - bus-reservation
+      - payment-gateway
+      - route-scheduler
+    networks:
+      - app-network
+
+  user-auth:
+    image: user-auth:latest
+    networks:
+      - app-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  bus-reservation:
+    image: bus-reservation:latest
+    networks:
+      - app-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  payment-gateway:
+    image: payment-gateway:latest
+    networks:
+      - app-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  route-scheduler:
+    image: route-scheduler:latest
+    networks:
+      - app-network
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  app-network:
+    driver: overlay
+
